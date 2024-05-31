@@ -33,50 +33,17 @@ public class GameHub : Hub
     }
     public async Task PickCard(string user, int points)
     {
-        if (currentPlayer == 0)
-        {
             playerScores.AddOrUpdate(user, points, (key, oldValue) => oldValue + points);
             var newScore = playerScores[user];
             game.Deal(user);
             Console.WriteLine("TO NA GORZE CHCIALES");
-            Console.WriteLine("Cards in deck: " + game.deck.Cards.Count);
+            Console.WriteLine("Cards in deck: " + game.deck.cards.Count);
             game.Deal(user);
             await Clients.Client(Context.ConnectionId).SendAsync("DisplayCards", game.playerHand[user]);
             await Clients.Caller.SendAsync("ReceiveScore", user, newScore);
             await AllScores();
-
-            // Switch the current player
-            currentPlayer = 1;
-        }
-        else
-        {
-            // It's not the user's turn, send a message to the user
-            await Clients.Caller.SendAsync("NotYourTurn", "It's not your turn yet.");
-        }
     }
-
-
-    public async Task PickCard2(string user, int points)
-    {
-        if (currentPlayer == 1)
-        {
-            playerScores.AddOrUpdate(user, points, (key, oldValue) => oldValue + points);
-            var newScore = playerScores[user];
-            game.Deal(user);
-            await Clients.Client(Context.ConnectionId).SendAsync("DisplayCards2", game.playerHand[user]);
-            await Clients.Caller.SendAsync("ReceiveScore", user, newScore);
-            await AllScores();
-
-            // Switch the current player
-            currentPlayer = 0;
-        }
-        else
-        {
-            // It's not the user's turn, send a message to the user
-            await Clients.Caller.SendAsync("NotYourTurn", "It's not your turn yet.");
-        }
-    }
-
+    
     public async Task AllScores()
     {
         foreach (var playerScore in playerScores)

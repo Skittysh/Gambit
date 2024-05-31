@@ -19,26 +19,15 @@ public class Game
 
     public void Deal(string username)
     {
-        if (deck.Cards.Count > 0)
+        if (deck.cards.Count > 0)
         {
            // hand.Cards.Add(deck.Draw());
             playerHand[username].Add(deck.Draw());
         }
     }
 
-    // public void Deal2()
-    // {
-    //     if (deck.Cards.Count > 0)
-    //     {
-    //         hand2.Cards.Add(deck.Draw());
-    //     }
-    // }
-
     public List<Card> Display(string username)
     {
         return playerHand[username];
     }
-    // {
-    //     return hand.Cards;
-    // }
 }
