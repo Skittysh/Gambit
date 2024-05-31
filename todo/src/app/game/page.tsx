@@ -1,10 +1,11 @@
 "use client";
-import CardGame from '../(components)/gameGame';
+import CardGame from './gameGame';
 
 const Home: React.FC = () => {
     return (
         <div>
             <CardGame />
+            
         </div>
     );
 };

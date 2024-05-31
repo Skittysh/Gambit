@@ -13,11 +13,11 @@ public class Deck
 
     private void CreateDeck()
     {
-        foreach (Suit suit in Enum.GetValues(typeof(Suit)))
+        foreach (Suitx suiter in Enum.GetValues(typeof(Suitx)))
         {
             foreach (Rank rank in Enum.GetValues(typeof(Rank)))
             {
-                Cards.Add(new Card(suit, rank));
+                Cards.Add(new Card(suiter, rank));
             }
         }
     }

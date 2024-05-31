@@ -1,6 +1,6 @@
 namespace GambitLogic;
 
-public enum Suit
+public enum Suitx
 {
     Hearts = 0,
     Diamonds = 14,
