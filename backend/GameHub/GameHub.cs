@@ -1,13 +1,14 @@
 using GambitLogic;
 using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
+using project.Model;
 
 public class GameHub : Hub
 {
     private static ConcurrentDictionary<string, int> playerScores = new ConcurrentDictionary<string, int>();
     private static ConcurrentDictionary<string, string> players = new ConcurrentDictionary<string, string>();
-
     private static int currentPlayer = 0;
+    private static List<Room> RoomList = new List<Room>();
 
     static Game game;
 
@@ -56,23 +57,44 @@ public class GameHub : Hub
     {
         game = new Game();
         players.TryAdd(Context.ConnectionId, "username");
-        // if (players.Count == 1)
-        // {
-
-        //     await Clients.Client(Context.ConnectionId).SendAsync("DisplayCards", game.hand.Cards);
-        // }
-
-        // else if (players.Count == 2)
-        // {
-         
-        //     await Clients.Client(Context.ConnectionId).SendAsync("DisplayCards2", game.hand2.Cards);
-        // }
-        await base.OnConnectedAsync();
+ 
     }
 
     public override Task OnDisconnectedAsync(Exception exception)
     {
         players.TryRemove(Context.ConnectionId, out _);
         return base.OnDisconnectedAsync(exception);
+    }
+    public async Task getPlayersCtrInRoom(int roomIndex)
+    {
+        await Clients.All.SendAsync("getPlayersCtrInRoom", RoomList[roomIndex].Capacity());
+    }
+
+    public async Task JoinRoom(int roomIndex, string username)
+    {
+        if ( RoomList[roomIndex].Capacity() < 2)
+        {
+            RoomList[roomIndex].Join(username);
+            await Clients.All.SendAsync("JoinRoom", roomIndex, username);
+        }
+        else
+        {
+            await Clients.Caller.SendAsync("RoomFull", "The room is full.");
+        }
+    }
+    
+    public async Task LeaveRoom(int roomIndex, string username)
+    {
+        RoomList[roomIndex].Leave(username);
+        await Clients.All.SendAsync("LeaveRoom", roomIndex, username);
+    }
+    
+    public async Task AddRoom()
+    {
+        Console.WriteLine(RoomList.Count);
+        RoomList.Add(new Room());
+        await Clients.Client(Context.ConnectionId).SendAsync("AddRoom", RoomList.Count);
+        await Clients.Caller.SendAsync("AddRoom", RoomList.Count);
+        await Clients.All.SendAsync("AddRoom", RoomList.Count);
     }
 }

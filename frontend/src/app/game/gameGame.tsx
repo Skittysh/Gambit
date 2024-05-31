@@ -57,9 +57,6 @@ const CardGame: React.FC = () => {
         signalRService.pickCard(user, points);
     };
 
-    const handleCardPick2 = (points: number) => {
-        signalRService.pickCard2(user, points);
-    };
 
     return (
         <div className="p-20 bg-blue-50 min-h-screen">
@@ -100,15 +97,6 @@ const CardGame: React.FC = () => {
                 <div className="mt-6">
                     <h3 className="text-lg text-gray-800 mb-2">Cards for player 2:</h3>
                     <div className="flex justify-between space-x-2">
-                        {cardsPlayer2.map((card) => (
-                            <button
-                                key={card.ider}
-                                className="flex-1 px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 transition-all duration-300"
-                                onClick={() => { handleCardPick2(card.rank); }}
-                            >
-                                Card {card.rank}
-                            </button>
-                        ))}
                     </div>
                 </div>
                 <div className="bg-white p-6 rounded-lg shadow-lg mt-6">
