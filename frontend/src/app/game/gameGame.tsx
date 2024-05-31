@@ -1,5 +1,3 @@
-// gameGame.tsx
-
 import React, { useEffect, useState } from 'react';
 import { signalRService } from '../services/signalrService';
 
@@ -36,14 +34,14 @@ const CardGame: React.FC = () => {
         signalRService.onDisplayCards(handleDisplayCards);
         signalRService.onDisplay2Cards(handleDisplay2Cards);
         signalRService.onReceiveAllScores(handleReceiveAllScores);
-        signalRService.onPlayerJoin(handlePlayerJoin);
+        signalRService.onGamePlayerJoin(handlePlayerJoin);
 
         return () => {
             signalRService.offReceiveScore(handleReceiveScore);
             signalRService.offDisplayCards(handleDisplayCards);
             signalRService.offDisplay2Cards(handleDisplay2Cards);
             signalRService.offReceiveAllScores(handleReceiveAllScores);
-            signalRService.offPlayerJoin(handlePlayerJoin);
+            signalRService.offGamePlayerJoin(handlePlayerJoin);
         };
     }, []);
 
@@ -56,7 +54,6 @@ const CardGame: React.FC = () => {
     const handleCardPick = (points: number) => {
         signalRService.pickCard(user, points);
     };
-
 
     return (
         <div className="p-20 bg-blue-50 min-h-screen">

@@ -2,15 +2,11 @@
 import React, { useEffect, useState } from 'react';
 import { signalRService } from '../services/signalrService';
 
-type Room = {
-    roomId: number;
-    username: string;
-};
-
 const WaitingRoomPage = () => {
-    const [rooms, setRooms] = useState<Room[]>([]);
+    const [rooms, setRooms] = useState<{ roomId: number, username: string }[]>([]);
     const [username, setUsername] = useState<string>("");
-    const [roomNumber, setRoomNumber] = useState<number>(4);
+    const [roomCount, setRoomCount] = useState<number>(0);
+    const [selectedRoom, setSelectedRoom] = useState<number | null>(null);
 
     useEffect(() => {
         const handleJoinRoom = (roomId: number, username: string) => {
@@ -23,28 +19,34 @@ const WaitingRoomPage = () => {
             setRooms(prevRooms => prevRooms.filter(room => room.roomId !== roomId || room.username !== username));
         };
 
+        const handleAddRoom = (roomCount: number) => {
+            console.log(`Number of rooms: ${roomCount}`);
+            setRoomCount(roomCount);
+        };
 
-        signalRService.LeaveRoom((roomId: number, username: string) => handleJoinRoom(roomId, username));
+        signalRService.onAddRoom(handleAddRoom);
+        signalRService.onPlayerJoin(handleJoinRoom);
+        signalRService.onPlayerLeave(handleLeaveRoom);
 
         return () => {
-            signalRService.connection.off("JoinRoom", handleJoinRoom);
-            signalRService.connection.off("LeaveRoom", handleLeaveRoom);
+            signalRService.offAddRoom(handleAddRoom);
+            signalRService.offPlayerJoin(handleJoinRoom);
+            signalRService.offPlayerLeave(handleLeaveRoom);
         };
-    }, [signalRService]);
+    }, []);
 
-    const handleAddRoom = (roomCtr: number) => {
-        console.log(`${roomCtr}`)
-    }
     const handleClickAddRoom = () => {
-        signalRService.AddRoom(handleAddRoom);
+        signalRService.addRoom();
     };
 
-    const handleJoinRoomClick = (id: number) => {
-        // signalRService.JoinRoom(id, username)
+    const handleClickJoinRoom = () => {
+        if (selectedRoom !== null && username) {
+            signalRService.joinRoom(selectedRoom, username);
+        }
     };
 
-    const handleLeaveRoomClick = () => {
-        // Function to handle leaving a room (implementation depends on your backend logic)
+    const handleClickLeaveRoom = (roomId: number) => {
+        signalRService.leaveRoom(roomId, username);
     };
 
     return (
@@ -56,12 +58,24 @@ const WaitingRoomPage = () => {
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Enter your username"
             />
-            {/* <button onClick={handleJoinRoomClick}>Join Room</button> */}
-            {/* <button onClick={handleLeaveRoomClick}>Leave Room</button> */}
-            <button onClick={handleClickAddRoom}>AddRoom</button>
+            <button onClick={handleClickAddRoom}>Add Room</button>
 
             <div>
-                <h2>Rooms:</h2>
+                <h2>Available Rooms:</h2>
+                <ul>
+                    {Array.from({ length: roomCount }, (_, roomIndex) => (
+                        <li key={roomIndex}>
+                            Room ID: {roomIndex + 1}
+                            <button onClick={() => setSelectedRoom(roomIndex + 1)}>Select Room</button>
+                            <button onClick={() => handleClickLeaveRoom(roomIndex + 1)}>Leave Room</button>
+                        </li>
+                    ))}
+                </ul>
+                <button onClick={handleClickJoinRoom}>Join Selected Room</button>
+            </div>
+
+            <div>
+                <h2>Joined Rooms:</h2>
                 <ul>
                     {rooms.map((room, index) => (
                         <li key={index}>
@@ -75,4 +89,3 @@ const WaitingRoomPage = () => {
 };
 
 export default WaitingRoomPage;
-

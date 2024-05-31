@@ -1,7 +1,5 @@
 import * as signalR from "@microsoft/signalr";
 
-
-
 class SignalRService {
     public connection: signalR.HubConnection;
 
@@ -15,25 +13,42 @@ class SignalRService {
         this.connection.start().catch(err => console.error(err.toString()));
     }
 
-    public JoinRoom(callback: (roomId: number, username: string) => void): void {
+    public joinRoom(roomId: number, username: string): void {
+        this.connection.invoke("JoinRoom", roomId, username).catch(err => console.error(err.toString()));
+    }
+
+    public leaveRoom(roomId: number, username: string): void {
+        this.connection.invoke("LeaveRoom", roomId, username).catch(err => console.error(err.toString()));
+    }
+
+    public onPlayerJoin(callback: (roomId: number, username: string) => void): void {
         this.connection.on("JoinRoom", callback);
     }
 
-    public LeaveRoom(callback: (roomId: number, username: string) => void): void {
+    public offPlayerJoin(callback: (roomId: number, username: string) => void): void {
+        this.connection.off("JoinRoom", callback);
+    }
+
+   
+   
+    public onPlayerLeave(callback: (roomId: number, username: string) => void): void {
         this.connection.on("LeaveRoom", callback);
     }
 
+    public offPlayerLeave(callback: (roomId: number, username: string) => void): void {
+        this.connection.off("LeaveRoom", callback);
+    }
 
-    public onPlayerJoin(callback: (user: string) => void): void {
+    public onGamePlayerJoin(callback: (username: string) => void): void {
         this.connection.on("PlayerJoined", callback);
     }
 
-    public offPlayerJoin(callback: (user: string) => void): void {
+    public offGamePlayerJoin(callback: (username: string) => void): void {
         this.connection.off("PlayerJoined", callback);
     }
 
     public onFull(callback: (message: string) => void): void {
-        this.connection.off("GameFull", callback);
+        this.connection.on("GameFull", callback);
     }
 
     public joinPlayer(user: string): void {
@@ -75,11 +90,18 @@ class SignalRService {
     public pickCard(user: string, points: number): void {
         this.connection.invoke("PickCard", user, points).catch(err => console.error(err.toString()));
     }
-    public AddRoom(callback: (roomctr: number) => void): void {
-        this.connection.invoke("AddRoom", callback)
+
+    public addRoom(): void {
+        this.connection.invoke("AddRoom").catch(err => console.error(err.toString()));
     }
 
+    public onAddRoom(callback: (roomCount: number) => void): void {
+        this.connection.on("AddRoom", callback);
+    }
+
+    public offAddRoom(callback: (roomCount: number) => void): void {
+        this.connection.off("AddRoom", callback);
+    }
 }
 
 export const signalRService = new SignalRService();
-
