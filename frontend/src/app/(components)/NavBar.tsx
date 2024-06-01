@@ -9,7 +9,7 @@ const NavBar: React.FC = () => {
     const navItems = [
         { icon: <FaHome />, label: 'Home', path: '/' },
         { icon: <FaGamepad />, label: 'Game', path: 'game' },
-        { icon: <FaRegUser />, label: 'User', path: 'game' },
+        { icon: <FaRegUser />, label: 'Lobby', path: 'Lobby' },
         { icon: <FaCog />, label: 'Settings', path: 'game' }
     ];
 
