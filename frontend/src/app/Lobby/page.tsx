@@ -40,8 +40,12 @@ const WaitingRoomPage = () => {
     };
 
     const handleClickJoinRoom = () => {
-        if (selectedRoom !== null && username) {
-            signalRService.joinRoom(selectedRoom, username);
+        if (selectedRoom !== null) {
+            if (username) {
+                signalRService.joinRoom(selectedRoom, username);
+            } else {
+                alert('Username is required to join a room');
+            }
         }
     };
 
@@ -51,41 +55,52 @@ const WaitingRoomPage = () => {
 
     return (
         <div className='p-24'>
-            <h1>Waiting Room</h1>
+            <h1 className="text-4xl font-bold mb-4">Waiting Room</h1>
             <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Enter your username"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
-            <button onClick={handleClickAddRoom}>Add Room</button>
+            <button onClick={handleClickAddRoom}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Add Room
+            </button>
 
-            <div>
-                <h2>Available Rooms:</h2>
-                <ul>
-                    {Array.from({ length: roomCount }, (_, roomIndex) => (
-                        <li key={roomIndex}>
-                            Room ID: {roomIndex + 1}
-                            <button onClick={() => setSelectedRoom(roomIndex + 1)}>Select Room</button>
-                            <button onClick={() => handleClickLeaveRoom(roomIndex + 1)}>Leave Room</button>
+            <div className="mt-8">
+                <h2 className="text-2xl font-bold mb-2">Available Rooms:</h2>
+                <ul className="list-disc pl-5">
+                    {Array.from({length: roomCount}, (_, roomIndex) => (
+                        <li key={roomIndex} className={`mb-2 ${selectedRoom === roomIndex + 1 ? 'bg-green-200' : ''}`}>
+                            Room ID: {roomIndex + 1} {selectedRoom === roomIndex + 1 ? '(selected)' : ''}
+                            <button onClick={() => setSelectedRoom(roomIndex + 1)}
+                                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded ml-2">Select
+                                Room
+                            </button>
+                            <button onClick={() => handleClickLeaveRoom(roomIndex + 1)}
+                                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded ml-2">Leave
+                                Room
+                            </button>
                         </li>
                     ))}
                 </ul>
-                <button onClick={handleClickJoinRoom}>Join Selected Room</button>
+                <button onClick={handleClickJoinRoom}
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Join
+                    Selected Room
+                </button>
             </div>
 
-            <div>
-                <h2>Joined Rooms:</h2>
-                <ul>
+            <div className="mt-8">
+                <h2 className="text-2xl font-bold mb-2">Joined Rooms:</h2>
+                <ul className="list-disc pl-5">
                     {rooms.map((room, index) => (
-                        <li key={index}>
+                        <li key={index} className="mb-2">
                             Room ID: {room.roomId}, Username: {room.username}
                         </li>
                     ))}
                 </ul>
             </div>
-        </div>
-    );
+        </div>);
 };
 
 export default WaitingRoomPage;
