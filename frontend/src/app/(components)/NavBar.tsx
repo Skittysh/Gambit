@@ -1,5 +1,6 @@
 "use client";
 import React from 'react';
+import { useState } from 'react';
 import { FaHome, FaGamepad, FaRegUser, FaCog, FaSnowflake } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import 'tailwindcss/tailwind.css';
@@ -12,7 +13,8 @@ const NavBar: React.FC = () => {
         { icon: <FaRegUser />, label: 'Lobby', path: 'Lobby' },
         { icon: <FaCog />, label: 'Settings', path: 'game' }
     ];
-
+    const [isOpen, setIsOpen] = useState(false);
+        // rest of your code
     return (
         <motion.div
             initial={{ y: -50, opacity: 0 }}
@@ -44,14 +46,39 @@ const NavBar: React.FC = () => {
                     </div>
                     <div className="-mr-2 flex md:hidden">
                         <button
+                            onClick={() => setIsOpen(!isOpen)}
                             className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-50 focus:ring-white"
                         >
                             <span className="sr-only">Open main menu</span>
                             {/* Heroicon menu for hamburger menu */}
-                            <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                            <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                 stroke="currentColor" aria-hidden="true">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                      d="M4 6h16M4 12h16M4 18h16"/>
                             </svg>
                         </button>
+                        {isOpen && (
+                            <div className="md:hidden">
+                                <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white shadow-lg rounded-lg">
+                                    {navItems.map((item, index) => (
+                                        <motion.a
+                                            key={index}
+                                            href={item.path}
+                                            className="text-gray-700 hover:bg-blue-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-2 transition-colors duration-200"
+                                            whileHover={{scale: 1.1}}
+                                            whileTap={{scale: 0.9}}
+                                        >
+                                            <div className="flex items-center space-x-2">
+                                                <div className="p-2 rounded-full bg-blue-100">
+                                                    {item.icon}
+                                                </div>
+                                                <span>{item.label}</span>
+                                            </div>
+                                        </motion.a>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
